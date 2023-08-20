@@ -14,19 +14,35 @@ spaceShip_speed = 2
 class Game:
 
     def __init__(self):
-        
+        self.i = 1
         pg.init()
         self.screen = pg.display.set_mode((window_width, window_height))
         pg.display.set_caption("Spaceship meteors")
         self.clock = pg.time.Clock()
         self.spaceShip = SpaceShip(self)
-        self.meteor_test = [Metors(self) for _ in range(10)]
+        self.meteors = [Metors(self) for _ in range(25)]
+        self.font = pg.font.Font(None, 50)
+        self.gameOver = False
+ 
     
     def draw_meteors(self):
-        for meteor in self.meteor_test:
+        for meteor in self.meteors:
             meteor.move_Down()
             meteor.draw()
-            
+
+
+    def checkCollision(self):
+        for meteor in self.meteors:
+            if self.spaceShip.rect().colliderect(meteor.rect()):
+                return True
+        return False
+
+    def drawGameOver(self):
+        self.screen.fill((255, 255, 255))
+        game_over_label = self.font.render(f"Game Over!!!", True, (255, 0, 0))
+        options_label   = self.font.render(f"Press R to play gain or Q to quit", True, (255, 0, 0))
+        self.screen.blit(game_over_label, (window_width / 3, window_height //3))
+        self.screen.blit(options_label, (window_width/3 - 150, window_height // 3 + 100))
 
     def play(self):
         is_running = True
@@ -36,27 +52,40 @@ class Game:
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
-            
-            keys = pg.key.get_pressed()
-
-            if keys[pg.K_LEFT]:
-                self.spaceShip.move_Left()
-
-            elif keys[pg.K_RIGHT]:
-                self.spaceShip.move_Right()
-
-            elif keys[pg.K_UP]:
-                self.spaceShip.move_UP()
-
-            elif keys[pg.K_DOWN]:
-                self.spaceShip.move_Down()
-
-            self.screen.fill((0, 0, 0))
-            self.spaceShip.draw()
-            self.draw_meteors()
+                    
+            if not self.gameOver:
+                keys = pg.key.get_pressed()
+    
+                if keys[pg.K_LEFT]:
+                    self.spaceShip.move_Left()
+    
+                elif keys[pg.K_RIGHT]:
+                    self.spaceShip.move_Right()
+    
+                elif keys[pg.K_UP]:
+                    self.spaceShip.move_UP()
+    
+                elif keys[pg.K_DOWN]:
+                    self.spaceShip.move_Down()
+    
+                if keys[pg.K_s]:
+                    self.spaceShip.shoot()
+    
+                self.screen.fill((0, 0, 0))
+                self.spaceShip.draw()
+                self.draw_meteors()
+                if self.checkCollision():
+                    self.gameOver = True
+            else:
+                self.drawGameOver()
+                keys = pg.key.get_pressed()
+                if keys[pg.K_r]:
+                    self.spaceShip.x = window_width / 2
+                    self.spaceShip.y = window_height - 40
+                    self.meteors = [Metors(self) for _ in range(25)]
+                    self.gameOver = False
+              
             pg.display.update()
-
-
 class GameObject:
 
     def load_image(self, filename):
@@ -69,6 +98,10 @@ class GameObject:
     
     def draw(self):
         self.game.screen.blit(self.image, (self.x, self.y))
+
+
+
+    
 
 
 class SpaceShip(GameObject):
@@ -93,6 +126,8 @@ class SpaceShip(GameObject):
     def move_Down(self):
         if self.y < window_height - 40:
             self.y += spaceShip_speed
+
+ 
 
 class Metors(GameObject):
     def __init__(self, game):
