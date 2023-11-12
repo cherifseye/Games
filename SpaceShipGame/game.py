@@ -9,7 +9,7 @@ window_width= 800
 window_height = 500
 initial_meteor_pos = 10
 meteor_Spped_max = 5
-spaceShip_speed = 2
+spaceShip_speed = 4
 
 class Game:
 

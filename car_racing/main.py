@@ -1,7 +1,16 @@
 from typing import Any
 import pygame
 import sys
+import os
 import random
+
+img_dir = os.path.join(os.path.dirname(__file__), "Icons")
+
+def ressource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+imag_dir = ressource_path("assets")
 
 # Initialize pygame
 pygame.init()
@@ -16,9 +25,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Car Racing Game")
 
 # Load images
-BG_IMAGE_PATH = '/home/casteck/Documents/Games/car_racing/car game/bg.png'
-CAR_IMAGE_PATH = '/home/casteck/Documents/Games/car_racing/car game/car1.jpeg'
-OBSTACLES_IMAGE_PATH = '/home/casteck/Documents/Games/car_racing/car game/car2.png'
+BG_IMAGE_PATH = ressource_path('assets/bg.png')
+CAR_IMAGE_PATH = ressource_path('assets/car1.jpeg')
+OBSTACLES_IMAGE_PATH = ressource_path('assets/car2.png')
 
 bg = pygame.image.load(BG_IMAGE_PATH).convert_alpha()
 car_image = pygame.image.load(CAR_IMAGE_PATH).convert_alpha()
@@ -107,10 +116,9 @@ while True:
         elif keys[pygame.K_DOWN] and car_y < SCREEN_HEIGHT - 95:
             car_y += 2
         elif keys[pygame.K_LEFT] and car_x > 180:
-            car_x -= 0.5
+            car_x -= 1.5
         elif keys[pygame.K_RIGHT] and car_x < 540 - 50:
-            car_x += 0.5
-    
+            car_x += 1.5
     bg_y = (bg_y + 1) % SCREEN_HEIGHT
 
     if not game_over:
