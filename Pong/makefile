@@ -13,7 +13,7 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 TARGET = main
 
 # Source files
-SRCS = Pong.cpp Bat.cpp
+SRCS = pong.cpp bat.cpp ball.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
