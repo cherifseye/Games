@@ -7,6 +7,7 @@ Bat::Bat(float start_x, float start_y){
     sf::Vector2f size(50.0f, 5.0f);
     m_shape.setSize(size);
     m_shape.setPosition(m_position.x, m_position.y);
+    m_shape.setFillColor(sf::Color::White);
     
 
 }

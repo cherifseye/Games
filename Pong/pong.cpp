@@ -4,17 +4,17 @@
 #include "ball.hpp"
 using namespace sf;
 
-const float width  = 1000.0f;
-const float height = 800.0f;
+//const float width  = 1000.0f;
+//const float height = 800.0f;
 
 int score = 0;
 int main(){
     
-    Bat bat(width/2, height-5);
-    Ball ball(width/2, 0);
-    VideoMode vm(width, height);
+    VideoMode Desktop = VideoMode::getDesktopMode();
 
-    RenderWindow window(vm, "Pong", Style::Default);
+    RenderWindow window(Desktop, "Pong Game");
+    Bat bat(window.getSize().x/2, window.getSize().y - 5.0f);
+    Ball ball(window.getSize().x/2, 0);
     Clock clock;
     Font font;
     font.loadFromFile("fonts/DS-DIGI.TTF");
@@ -27,6 +27,7 @@ int main(){
     hitbuffer.loadFromFile("sounds/Hit.wav");
     Sound hit;
     hit.setBuffer(hitbuffer);
+    bool hasitBat = false;
     
 
     while (window.isOpen())
@@ -36,6 +37,11 @@ int main(){
         if (window.pollEvent(event)){
             if (event.type == Event::Closed){
                 window.close();
+            }
+            if (event.type == Event::Resized){
+                FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(View(visibleArea));
+                bat.getShape().setPosition(bat.getPosition().getPosition().x, window.getSize().y-bat.getShape().getSize().y);
             }
         }
 
@@ -61,9 +67,15 @@ int main(){
         hit.play();
     }
     if (ball.getPosition().intersects(bat.getPosition())){
+        if (!hasitBat){
+            score += 1;
+            hasitBat = true;
+        }
         ball.reboundsBatorTop();
         hit.play();
-        score += 1;
+        
+    }else{
+        hasitBat = false;
     }
     if (ball.getPosition().top < 0){
         ball.reboundsBatorTop();
