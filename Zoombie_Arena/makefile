@@ -13,7 +13,7 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 TARGET = main
 
 # Source files
-SRCS = main.cpp
+SRCS = main.cpp player.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
