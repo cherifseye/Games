@@ -56,18 +56,6 @@ void Player::stopDown(){
     m_movingDown = false;
 }
 
-void Player::update(sf::Time dt){
-    if (m_movingLeft){
-        m_position.x -= dt.asSeconds() * m_speed;
-    }
-    if (m_movingRight){
-        m_position.x += dt.asSeconds() * m_speed;
-    }
-    if (m_movingDown){
-        m_position.y += dt.asSeconds() * m_speed;
-    }
-    if (m_movingUp){
-        m_position.y -= dt.asSeconds() * m_speed;
-    }
-    m_sprite.setPosition(m_position);
+void Player::update(float elapsedTime, sf::Vector2f mousePosition){
+
 }

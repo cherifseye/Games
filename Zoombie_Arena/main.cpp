@@ -42,7 +42,6 @@ int main(){
         else{
             player1.stopDown();
         }
-        player1.update(dt);
         window.clear();
         window.draw(player1.getSprite());
         window.display();
