@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
+#include "zoombieArena.h"
 
 using namespace sf;
 
 int main(){
-
     enum class State {PAUSED, LEVELING_UP, GAME_OVER, PLAYING};
     State state = State::GAME_OVER;
     Vector2f resolution;
@@ -20,6 +20,9 @@ int main(){
     Vector2i mouseScreenPosition;
     Player player1;
     IntRect arena;
+    VertexArray background;
+    Texture textureBackground;
+    textureBackground.loadFromFile("graphics/background_sheet.png");
     while (window.isOpen()){
         Time dt = clock.restart();
         Event event;
@@ -72,8 +75,8 @@ int main(){
                 arena.height = 500;
                 arena.left = 0;
                 arena.top = 0;
-
-                int tileSize = 50;
+                int tileSize = createBackground(background, arena);
+                //int tileSize = 50;
                 player1.spawn(arena, resolution, tileSize);
                 clock.restart();
             }
@@ -91,12 +94,14 @@ int main(){
             Vector2f playerPosition(player1.getCenter());
 
             mainView.setCenter(player1.getCenter());
-            window.setView(mainView);
+            
         }
 
         if (state == State::PLAYING)
         {
             window.clear();
+            window.setView(mainView);
+            window.draw(background, &textureBackground);
             window.draw(player1.getSprite());
         }
         if (state == State::LEVELING_UP)

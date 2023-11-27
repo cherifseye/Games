@@ -14,8 +14,8 @@ Player:: Player(){
 }
 
 void Player::spawn(sf::IntRect arena, sf::Vector2f resolution, int tileSize){
-    m_position.x = arena.width / 2;
-    m_position.y = arena.height / 2; //Place the player in the middle of the arena
+    m_position.x = arena.left + arena.width / 2;
+    m_position.y = arena.top + arena.height / 2; //Place the player in the middle of the arena
 
     m_arena.left = arena.left;
     m_arena.width = arena.width;
@@ -24,6 +24,7 @@ void Player::spawn(sf::IntRect arena, sf::Vector2f resolution, int tileSize){
     m_tileSize = tileSize;
     m_resolution.x = resolution.x;
     m_resolution.y = resolution.y;
+    m_sprite.setPosition(m_position);
 }
 
 void Player::resetPlayerStats(){
@@ -63,22 +64,22 @@ float Player::getRotation(){
 
 void Player::moveLeft(){
     m_movingLeft = true;
-    m_sprite.setRotation(180);
+    
 }
 
 void Player::moveRight(){
     m_movingRight = true;
-    m_sprite.setRotation(0);
+    
 }
 
 void Player::moveUp(){
     m_movingUp = true;
-    m_sprite.setRotation(270);
+    
 }
 
 void Player::moveDown(){
     m_movingDown = true;
-    m_sprite.setRotation(90);
+    
 }
 
 void Player::stopLeft(){
@@ -127,10 +128,7 @@ void Player::update(float elapsedTime, sf::Vector2f mousePosition){
         m_position.y += elapsedTime * m_speed;
     }
     m_sprite.setPosition(m_position);
-    m_position.x = std::max(static_cast<float> (m_arena.width + m_tileSize),
-                    std::min(m_position.x, static_cast<float>(m_arena.width - m_tileSize)));
-    m_position.y = std::max(static_cast<float> (m_arena.height + m_tileSize),
-        (std::min(m_position.y, static_cast<float> (m_arena.height-m_tileSize))));
+
 
     
     float angle = (atan2(m_position.y - m_resolution.y /2, m_position.x - m_resolution.x)/2) * (180.0f / M_PI);
