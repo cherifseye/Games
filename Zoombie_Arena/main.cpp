@@ -1,49 +1,111 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
+
 using namespace sf;
 
 int main(){
-    VideoMode Desktop = VideoMode::getDesktopMode();
-    RenderWindow window(Desktop, "Zoombie Arena");
-    
-    Player player1(window.getSize().x/2, window.getSize().y/2);
+
+    enum class State {PAUSED, LEVELING_UP, GAME_OVER, PLAYING};
+    State state = State::GAME_OVER;
+    Vector2f resolution;
+    resolution.x = VideoMode::getDesktopMode().width;
+    resolution.y = VideoMode::getDesktopMode().height;
+
+    RenderWindow window(VideoMode(resolution.x, resolution.y), "Zoombie Arena", Style::Fullscreen);
+
+    View mainView(FloatRect(0, 0, resolution.x, resolution.y));
     Clock clock;
+    Time gameTimeTotal;
+    Vector2f mouseWorldPosition;
+    Vector2i mouseScreenPosition;
+    Player player1;
+    IntRect arena;
     while (window.isOpen()){
         Time dt = clock.restart();
         Event event;
         if(window.pollEvent(event)){
-            if (event.type == Event::Closed){
-                window.close();
+            if (event.type == Event::KeyPressed){
+                if (event.key.code == Keyboard::Return && state == State::PLAYING){
+                    state = State::PAUSED;
+                }else if(event.key.code == Keyboard::Return && state == State::PAUSED){
+                    state = State::PLAYING;
+                    clock.restart();
+                }
+                else if(event.key.code == Keyboard::Return && state == State::GAME_OVER){
+                    state = State::LEVELING_UP;
+                }
+                if (state==State::PLAYING){};
             }
-            if (event.type == Event::Resized){
-                FloatRect viewArea(0, 0, event.size.width, event.size.height);
-                window.setView(View(viewArea));
+        } // Event polling
+        if (Keyboard::isKeyPressed(Keyboard::Escape)){
+            window.close();
+        }
+        if (state == State::PLAYING){
+            if(Keyboard::isKeyPressed(Keyboard::A)){
+                player1.moveLeft();
+            }else{
+                player1.stopLeft();
+            }
+            if (Keyboard::isKeyPressed(Keyboard::D)){
+                player1.moveRight();
+            }else{
+                player1.stopRight();
+            }
+            if (Keyboard::isKeyPressed(Keyboard::W)){
+                player1.moveUp();
+            }else{
+                player1.stopUp();
+            }
+            if (Keyboard::isKeyPressed(Keyboard::S)){
+                player1.moveDown();
+            }
+            else{
+                player1.stopDown();
+            }
+        }
+        if(state == State::LEVELING_UP){
+            if (event.key.code == Keyboard::Num1){
+                state = State::PLAYING;
+            }
+            if (state == State::PLAYING){
+                arena.width = 500;
+                arena.height = 500;
+                arena.left = 0;
+                arena.top = 0;
+
+                int tileSize = 50;
+                player1.spawn(arena, resolution, tileSize);
+                clock.restart();
             }
         }
 
-        if(Keyboard::isKeyPressed(Keyboard::A) && player1.getPosition().left > 0){
-            player1.moveLeft();
-        }else{
-            player1.stopLeft();
+        if (state == State::PLAYING)
+        {
+            Time dt = clock.restart();
+
+            gameTimeTotal += dt;
+            float dtAsSeconds = dt.asSeconds();
+            mouseScreenPosition = Mouse::getPosition();
+            mouseWorldPosition = window.mapPixelToCoords(Mouse::getPosition(), mainView);
+
+            Vector2f playerPosition(player1.getCenter());
+
+            mainView.setCenter(player1.getCenter());
+            window.setView(mainView);
         }
-        if (Keyboard::isKeyPressed(Keyboard::D) && player1.getPosition().left + player1.getPosition().width < window.getSize().x){
-            player1.moveRight();
-        }else{
-            player1.stopRight();
+
+        if (state == State::PLAYING)
+        {
+            window.clear();
+            window.draw(player1.getSprite());
         }
-        if (Keyboard::isKeyPressed(Keyboard::W) && player1.getPosition().top > 0){
-            player1.moveUp();
-        }else{
-            player1.stopUp();
+        if (state == State::LEVELING_UP)
+        {
         }
-        if (Keyboard::isKeyPressed(Keyboard::S) && player1.getPosition().top + player1.getPosition().height < window.getSize().y){
-            player1.moveDown();
+        if (state == State::PAUSED)
+        {
         }
-        else{
-            player1.stopDown();
-        }
-        window.clear();
-        window.draw(player1.getSprite());
         window.display();
     }
+  
 }

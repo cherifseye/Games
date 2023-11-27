@@ -12,9 +12,9 @@ private:
    sf::Vector2f m_position;
    sf::Vector2f m_resolution; //Screen resolution
 
-   sf::IntRect m_Arena;
+   sf::IntRect m_arena;
 
-   int m_TileSize; // Size of each tile
+   int m_tileSize; // Size of each tile
    bool m_movingLeft = false;
    bool m_movingRight = false;
    bool m_movingDown = false;
@@ -27,7 +27,7 @@ private:
    sf::Time m_lastHit;
 
 public:
-   Player(float startX, float startY);
+   Player();
    void spawn(sf::IntRect arena, sf::Vector2f resolution, int tileSize);
    void resetPlayerStats();
    bool hit(sf::Time timeHit);
