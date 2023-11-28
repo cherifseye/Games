@@ -114,7 +114,7 @@ int Player::getHealth(){
     return m_health;
 
 }
-void Player::update(float elapsedTime, sf::Vector2f mousePosition){
+void Player::update(float elapsedTime, sf::Vector2i mousePosition){
     if (m_movingLeft){
         m_position.x -= elapsedTime * m_speed;
     }
@@ -129,8 +129,16 @@ void Player::update(float elapsedTime, sf::Vector2f mousePosition){
     }
     m_sprite.setPosition(m_position);
 
-
+    // To do: set border of the player
+    if (m_position.x > (m_arena.width - m_tileSize) || m_position.x < (m_arena.left + m_tileSize)){
+        m_position.x = std::max((float) m_arena.left + m_tileSize, std::min(m_position.x, (float)m_arena.width - m_tileSize));
+    }
     
-    float angle = (atan2(m_position.y - m_resolution.y /2, m_position.x - m_resolution.x)/2) * (180.0f / M_PI);
-
+    if (m_position.y > (m_arena.height - m_tileSize) || m_position.y < m_arena.top + m_tileSize){
+        m_position.y = std::max((float) (m_arena.top + m_tileSize),  
+                        std::min(m_position.y, (float)(m_arena.height - m_tileSize)));
+    }
+    
+    float angle = (atan2(mousePosition.y - m_resolution.y /2, mousePosition.x - m_resolution.x)/2) * (180.0f / M_PI);
+    m_sprite.setRotation(angle);
 }

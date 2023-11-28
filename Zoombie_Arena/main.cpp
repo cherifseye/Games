@@ -1,8 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
 #include "zoombieArena.h"
-
-using namespace sf;
+#include <iostream>
+#include <string>
+using namespace std;
 
 int main(){
     enum class State {PAUSED, LEVELING_UP, GAME_OVER, PLAYING};
@@ -24,7 +25,6 @@ int main(){
     Texture textureBackground;
     textureBackground.loadFromFile("graphics/background_sheet.png");
     while (window.isOpen()){
-        Time dt = clock.restart();
         Event event;
         if(window.pollEvent(event)){
             if (event.type == Event::KeyPressed){
@@ -71,8 +71,8 @@ int main(){
                 state = State::PLAYING;
             }
             if (state == State::PLAYING){
-                arena.width = 500;
-                arena.height = 500;
+                arena.width = resolution.x;
+                arena.height = resolution.y;
                 arena.left = 0;
                 arena.top = 0;
                 int tileSize = createBackground(background, arena);
@@ -92,7 +92,7 @@ int main(){
             mouseWorldPosition = window.mapPixelToCoords(Mouse::getPosition(), mainView);
 
             Vector2f playerPosition(player1.getCenter());
-
+            player1.update(dtAsSeconds, Mouse::getPosition());
             mainView.setCenter(player1.getCenter());
             
         }
