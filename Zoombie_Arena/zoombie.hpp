@@ -13,7 +13,7 @@ private:
     const float CRAWLER_HEALTH = 3;
 
     const int MAX_VARIANCE = 30;
-    const int OFFSET = 101 - MAX_VARIANCE;  
+    const int OFFSET = 101 - MAX_VARIANCE;
 
     Vector2f m_position;
     Sprite m_sprite;

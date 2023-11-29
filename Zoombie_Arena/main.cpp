@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
 #include "zoombieArena.h"
-#include <iostream>
-#include <string>
+#include "textureHolder.hpp"
 using namespace std;
 
 int main(){
+    TextureHolder holder;
     enum class State {PAUSED, LEVELING_UP, GAME_OVER, PLAYING};
     State state = State::GAME_OVER;
     Vector2f resolution;
@@ -24,6 +24,10 @@ int main(){
     VertexArray background;
     Texture textureBackground;
     textureBackground.loadFromFile("graphics/background_sheet.png");
+    int numZoombies;
+    int numZoombiesAlive;
+    Zoombie* zoombies = nullptr;
+
     while (window.isOpen()){
         Event event;
         if(window.pollEvent(event)){
@@ -78,6 +82,10 @@ int main(){
                 int tileSize = createBackground(background, arena);
                 //int tileSize = 50;
                 player1.spawn(arena, resolution, tileSize);
+                numZoombies = 10;
+                delete[] zoombies;
+                zoombies = createHord(numZoombies, arena);
+                numZoombiesAlive = numZoombies;
                 clock.restart();
             }
         }
@@ -94,6 +102,13 @@ int main(){
             Vector2f playerPosition(player1.getCenter());
             player1.update(dtAsSeconds, Mouse::getPosition());
             mainView.setCenter(player1.getCenter());
+
+            for (int i=0; i<numZoombies; i++){
+                if (zoombies[i].isAlive())
+                {
+                    zoombies[i].update(dtAsSeconds, playerPosition);
+                }
+            }
             
         }
 
@@ -101,7 +116,11 @@ int main(){
         {
             window.clear();
             window.setView(mainView);
-            window.draw(background, &textureBackground);
+            window.draw(background, &textureBackground);  
+            for (int i=0; i<numZoombies; i++)
+            {
+                window.draw(zoombies[i].getSprite());
+            }
             window.draw(player1.getSprite());
         }
         if (state == State::LEVELING_UP)
@@ -112,5 +131,7 @@ int main(){
         }
         window.display();
     }
+    delete zoombies;
+    return 0;
   
 }
